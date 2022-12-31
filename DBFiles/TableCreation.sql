@@ -173,7 +173,10 @@ CREATE DEFINER=`bankadmin`@`localhost` TRIGGER `loans_BEFORE_INSERT` BEFORE INSE
 		set period = period - 1;
         set interesttemp = interesttemp + 0.15;
 	end while;
-    
+
+      if interesttemp > 25 then
+		    set interesttemp = 25;
+	    end if;
     
     set new.interest_rate = interesttemp;
 	set new.repayable_amount = ((interesttemp * new.amount * pyears) / 100) + new.amount;

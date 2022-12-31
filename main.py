@@ -56,9 +56,19 @@ def loginverify():
 @app.route('/<int:accno>')
 def userdetails(accno):
     curr.execute('select * from transactions where sender_accno = %s', [int(accno)])
-    res = curr.fetchall()
-    print(type(res))
-    return render_template('userdetails.html', transactions=res)
+    transactions = curr.fetchall()
+    curr.execute('select * from investments where accno = %s', [int(accno)])
+    investments = curr.fetchall()
+    curr.execute('select * from loans where accno = %s', [int(accno)])
+    loans = curr.fetchall()
+    curr.execute('select name from accounts where accno = %s', [int(accno)])
+    name = curr.fetchone()
+
+    return render_template('userdetails.html', transactions=transactions, investments=investments, loans=loans,accno=accno, name = name[0])
+
+@app.route('/<int:accno>transact')
+def transact(accno):
+    return 'you hab money?'
 
 
 if __name__ == '__main__':
