@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect
 import time
 
 
@@ -38,16 +38,27 @@ def loginverify():
     if request.method == 'POST':
         accno = request.form["accno"]
         password = request.form["password"]
-        curr.execute('select passwordCheck(%s,%s)', [int(accno), password])
-        validity = curr.fetchone()
-        if validity[0] == 1:
-            authtoken = 1
+        try : 
+            curr.execute('select passwordCheck(%s,%s)', [int(accno), password])
+            validity = curr.fetchone()
+            if validity[0] == 1:
+                authtoken = 1
+        except :
+            return 'Invalid Input'
 
     if authtoken == 0:
         return render_template('login.html', valid = 'Please re-check the credentials')
     else:
         authtoken = 0
-        return 'happy banking'
+        return redirect('/' + accno)
+
+
+@app.route('/<int:accno>')
+def userdetails(accno):
+    curr.execute('select * from transactions where sender_accno = %s', [int(accno)])
+    res = curr.fetchall()
+    print(type(res))
+    return render_template('userdetails.html', transactions=res)
 
 
 if __name__ == '__main__':

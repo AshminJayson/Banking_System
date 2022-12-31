@@ -13,24 +13,25 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background-image: linear-gradient(to bottom, #ffa500, #d06b2d, #904032, #4a2125, #000000);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: sans-serif;
         }
 
         #card {
-            height: 500px;
+            height: 550px;
             width: 350px;
-            background-color: rgb(200, 226, 235);
-            border: 1px solid black;
-            border-radius: 10px;
+            background-color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            /* gap: 20px; */
         }
 
         form {
@@ -51,18 +52,23 @@
             border: 2px solid grey;
             border-radius: 5px;
             text-align: center;
+            
         }
 
         button {
             height: 40px;
             width: 150px;
-            background-color: lightskyblue;
-            border: 1px dashed blue;
-            border-radius: 5px;
+            background-color: orange;
+            border: 1px solid green;
+            border-radius: 25px;
+            font-weight: bold;
         }
 
-        #card > p.verifyLogin {
+        form > p.verifyLogin {
             color: red;
+            font-size: 15px;
+            font-weight: bold;
+            margin: 10px;
         }
 
         #card > p {
@@ -70,6 +76,8 @@
             font-weight: bold;
             margin: 5px;
         }
+
+
         
     </style>
 
@@ -78,13 +86,13 @@
 <body>
     <div class="" id="card">
         <img src="/static/security-svgrepo-com.svg" alt="" style="width: 50%; margin: 20px;">
-        <p>Login to Your Account</p>
+        <p>Welcome Back</p>
         <form action="/" method = "POST">
             <input type = "integer" name = "accno" placeholder="Account Number"/>
             <input type = "text" name = "password" placeholder="Password"/>
-            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="submit" class="btn btn-primary">LOGIN</button>
+            <p class="verifyLogin">{{valid}}</p>
         </form>
-        <p class="verifyLogin">{{valid}}</p>
     </div>
 </body>
 </html>
