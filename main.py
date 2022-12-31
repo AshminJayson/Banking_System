@@ -18,13 +18,18 @@ class dbConnection:
 
 
     def verifyLogin(self, accno, password):
-        execStatement = "select password from user where accno = %s"
-        self.curr.execute(execStatement, [int(accno)])
-        validPassword = self.curr.fetchone()[0]
+        execStatement = "select * from user"
+        self.curr.execute(execStatement)
+        # self.curr.execute(execStatement, [int(accno)])
+        validPassword = self.curr.fetchall()
+        return validPassword
 
-        res =  True if password == validPassword else False
-        return res
-
+    def log(self):
+        execStatement = "select * from user"
+        self.curr.execute(execStatement)
+        # self.curr.execute(execStatement, [int(accno)])
+        validPassword = self.curr.fetchall()
+        return validPassword
 
     def __del__(self):
         self.curr.close()
@@ -36,7 +41,10 @@ class dbConnection:
 app = Flask(__name__)
 @app.route("/")
 def hello():
-    return render_template('login.html')
+    dbObj = dbConnection()
+    users = dbObj.log()
+    print(users)
+    return render_template('login.html', users = users)
 
 @app.route("/login", methods = ['POST', 'GET'])
 def login():
