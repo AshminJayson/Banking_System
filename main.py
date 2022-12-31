@@ -1,6 +1,8 @@
 import mysql.connector
 from flask import Flask, request, render_template, redirect
 import time
+from datetime import datetime
+datetime.today().strftime('%Y-%m-%d')
 
 
 try :
@@ -53,7 +55,7 @@ def loginverify():
         return redirect('/' + accno)
 
 
-@app.route('/<int:accno>')
+@app.route('/<string:accno>')
 def userdetails(accno):
     curr.execute('select * from transactions where sender_accno = %s', [int(accno)])
     transactions = curr.fetchall()
@@ -66,10 +68,28 @@ def userdetails(accno):
 
     return render_template('userdetails.html', transactions=transactions, investments=investments, loans=loans,accno=accno, name = name[0])
 
-@app.route('/<int:accno>transact')
+@app.route('/<string:accno>transact')
+def transactPage(accno):
+    return render_template('transact.html', accno=accno)
+
+@app.route('/<string:accno>transact', methods=['POST'])
 def transact(accno):
-    return 'you hab money?'
+    if request.method == 'POST':
+        raccno = request.form["raccno"]
+        amount = request.form["amount"]
+        date = datetime.today().strftime('%Y-%m-%d')
+
+        try:
+            curr.execute('insert into transactions values(null,%s,%s,%s,%s,null)', [int(accno), int(raccno),int(amount),date])
+            curr.execute('commit')
+        except:
+            print('Database insertion error')
 
 
+    return redirect('/' + accno)
+
+    
 if __name__ == '__main__':
     app.run(debug=True)
+    curr.close()
+    conn.close()

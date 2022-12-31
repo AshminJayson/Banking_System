@@ -9,7 +9,7 @@
 <style>
     * {
         box-sizing: border-box;
-        margin: 20px;
+        margin: 0;
         padding: 0;
         font-family: sans-serif;
     }
@@ -24,8 +24,6 @@
     .hero {
         width: 90vw;
         display: flex;
-        /* justify-content: center;
-        align-items: center;     */
         background-color: white;
         flex-direction: column;
     }
@@ -39,6 +37,7 @@
     table {
         border: 2px solid black;
         border-radius: 5px;
+        margin: 10px;
     }
 
 
@@ -55,6 +54,23 @@
         border: 0.5px solid lightgrey;
     }
 
+    form {
+        display: inline;
+    }
+    form > button {
+        border: 1px solid black;
+        border-radius: 20px;
+        height: 40px;
+        width: 130px;
+        background-color: orange;
+        font-weight: bold;
+    }
+
+    #buttons {
+        margin: 10px;
+        display: flex;
+        justify-content: space-evenly;
+    }
 
 </style>
 <body>
@@ -78,8 +94,8 @@
             </tr>
             {% endfor %}
         </table>
-        <a href="./{{accno}}transact">You hab money?</a>
-
+        
+        
         <table id="investments">
             <tr>
                 <td>Investment ID</td>
@@ -103,7 +119,7 @@
             </tr>
             {% endfor %}
         </table>
-
+        
         <table id="loans">
             <tr>
                 <td>Loan ID</td>
@@ -114,7 +130,7 @@
                 <td>Duration(in days)</td>
                 <td>Repayable Amount</td>
             </tr>
-
+            
             {% for data in loans %}
             <tr>
                 <td>{{data[0]}}</td>
@@ -127,7 +143,24 @@
             </tr>
             {% endfor %}
         </table>
+        <div id="buttons">
+            <form action="/{{accno}}transact">
+                <button type="submit">New Transaction</button>
+             </form>
+            <form action="/{{accno}}transact">
+                <button type="submit">New Investment</button>
+             </form>
+            <form action="/{{accno}}transact">
+                <button type="submit">Close Investment</button>
+             </form>
+            <form action="/{{accno}}transact">
+                <button type="submit">New Loan</button>
+             </form>
+            <form action="/{{accno}}transact">
+                <button type="submit">Repay Loan</button>
+             </form>
+        </div>
     </div>
-
+    
 </body>
 </html>

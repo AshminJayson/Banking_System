@@ -7,6 +7,13 @@
     <title>Transact</title>
 </head>
 <body>
-    
+    <div class="hero">
+        <form action="/{{accno}}transact" method="POST">
+            <input type='int' name = "raccno" placeholder="Recipient Account Number"/>
+            <input type='int' name = "amount" placeholder="Amount"/>
+            <button type="submit">Initiate Transaction</button>
+        </form>
+    </div>
+
 </body>
 </html>
