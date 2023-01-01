@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan</title>
+
+    <link rel="stylesheet" href="/static/styles.css">
+
+    <style>
+        .hero > p {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        form {
+            align-items: flex-start;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <p>Enter Loan Details</p>
+        <form action="/{{accno}}loan" method="POST">
+            <label for="" style="font-size: 12px; text-align: left; margin-left: 16px;">Loan Amount</label>
+            <input type="int" name="lamount" placeholder="Amount"/>
+            <label for="" style="font-size: 12px; text-align: left; margin-left: 16px;">Repayment Date</label>
+            <input type="date" name="rdate" placeholder="Repayment Date"/>
+            <button type="submit" style="margin-left : 80px; ">Apply For Loan</button>
+        </form>
+        
+    </div>
+</body>
+</html>

@@ -20,16 +20,16 @@ except:
     print('Connection to the DB has failed')
 
 
-
-
 app = Flask('__name__')
 
 
-
+# Login Page
 
 @app.route("/")
 def login():
     return render_template('login.html', valid='')
+
+# Invalid Login
 
 @app.route("/", methods = ['POST','GET'])
 def loginverify():
@@ -49,8 +49,7 @@ def loginverify():
             return render_template('login.html', valid = 'Invalid Input')
 
 
-
-
+# User Details
 
 @app.route('/<int:accno>')
 def userdetails(accno):
@@ -68,9 +67,14 @@ def userdetails(accno):
 
     return render_template('userdetails.html', bldetails = bldetails, transactions=transactions, investments=investments, loans=loans,accno=accno, name = name[0])
 
+# Transaction Menu
+
 @app.route('/<int:accno>transact')
 def transactPage(accno):
     return render_template('transact.html', accno=accno)
+
+
+# Transaction Routing
 
 @app.route('/<int:accno>transact', methods=['POST'])
 def transact(accno):
@@ -86,6 +90,9 @@ def transact(accno):
             print(err)
 
         return redirect('/' + str(accno))
+
+
+# Opening Investment
 
 @app.route('/<int:accno>openinvestment')
 def investmentpage(accno):
@@ -111,6 +118,8 @@ def investmentopen(accno):
     
     return 'hello'
 
+
+# Closing Investment
 @app.route('/<int:accno>+<int:investmentid>investment', methods = ['POST'])
 def closeinvestment(accno, investmentid):
     if request.method == 'POST':
@@ -118,6 +127,7 @@ def closeinvestment(accno, investmentid):
         curr.execute('commit')
         return redirect('/' + str(accno))
 
+# Closing Loan
 @app.route('/<int:accno>+<int:loanid>loan', methods=['POST'])
 def repayLoan(accno, loanid):
     if request.method == 'POST':
@@ -132,6 +142,29 @@ def repayLoan(accno, loanid):
             print(err)
 
     return 'hello'
+
+#New Loan
+
+@app.route('/<int:accno>loan')
+def loan(accno):
+    return render_template('loan.html', accno=accno)
+
+#Submit Loan
+@app.route('/<int:accno>loan', methods=["POST"])
+def loansanction(accno):
+    amount = request.form["lamount"]
+    rdate = request.form["rdate"]
+    cdate = datetime.today().strftime('%Y-%m-%d')
+
+    try:
+        curr.execute('insert into loans values(null,%s,%s,null,%s,%s,null,null)', [accno, int(amount),cdate,rdate])
+        curr.execute('commit')
+        # redirect('/' + str(accno))
+
+    except mysql.connector.Error as err:
+        print(err)
+
+    return redirect('/' + str(accno))
 
 
 if __name__ == '__main__':
