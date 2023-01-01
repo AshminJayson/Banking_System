@@ -5,10 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transact</title>
+
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <div class="hero">
         <form action="/{{accno}}transact" method="POST">
+            <p>Sender Account Number : {{accno}}</p>
             <input type='int' name = "raccno" placeholder="Recipient Account Number"/>
             <input type='int' name = "amount" placeholder="Amount"/>
             <button type="submit">Initiate Transaction</button>

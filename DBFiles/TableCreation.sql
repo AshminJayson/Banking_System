@@ -63,40 +63,9 @@ CREATE TABLE `transactions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-DELIMITER $$
-CREATE DEFINER=`bankadmin`@`localhost` PROCEDURE `closeLoan`(iaccno int, iloan_id int)
-BEGIN
-	declare payableamount float;
-    declare accbalance float;
-    declare minaccbalance float;
-    
-    select balance into accbalance from balance_details where iaccno = accno;
-    select min_balance into minaccbalance from balance_details where iaccno = accno;
-    select repayable_amount into payableamount from loans where load_id = iloan_id;
-    
-    if payableamount - accbalance > minaccbalance then
-		delete from loans where loan_id = iloan_id;
-        update balance_details set balance = payableamount - accbalance where accno = iaccno;
-	end if;
-END$$
-DELIMITER ;
 
 
-DELIMITER $$
-CREATE DEFINER=`bankadmin`@`localhost` FUNCTION `passwordCheck`(iaccno int, ipassword varchar(30)) RETURNS int
-BEGIN
-	declare validpass varchar(30);
-    
-    select password into validpass from accounts where accno = iaccno;
-    
-    if validpass = ipassword then
-		return 1;
-	else
-		return 0;
-	end if;
 
-END$$
-DELIMITER ;
 
 
 -- Triggers : 
@@ -201,3 +170,61 @@ CREATE DEFINER=`bankadmin`@`localhost` TRIGGER `transactions_BEFORE_INSERT` BEFO
         
     
 END
+
+-- Functions : 
+
+
+
+DELIMITER $$
+CREATE DEFINER=`bankadmin`@`localhost` FUNCTION `openInvestment`(iaccno int, iamount int, mdate date, cdate date) RETURNS int
+BEGIN
+	declare ibalance int;
+    declare iminbalance int;
+    
+    select balance, min_balance into ibalance, iminbalance from balance_details
+    where iaccno = accno;
+    
+    if ibalance - iamount >= iminbalance then
+		update balance_details set balance = ibalance - iamount where accno = iaccno;
+		insert into investments values(null,iaccno,iamount,null,cdate,mdate,null,null);
+		RETURN 1;
+    end if;
+RETURN 0;
+END$$
+DELIMITER ;
+
+
+
+CREATE DEFINER=`bankadmin`@`localhost` FUNCTION `repayLoan`(iaccno int, iloan_id int) RETURNS int
+BEGIN
+	declare payableamount float;
+    declare accbalance float;
+    declare minaccbalance float;
+    
+    select balance into accbalance from balance_details where iaccno = accno;
+    select min_balance into minaccbalance from balance_details where iaccno = accno;
+    select repayable_amount into payableamount from loans where loan_id = iloan_id;
+    
+    if accbalance - payableamount > minaccbalance then
+		delete from loans where loan_id = iloan_id;
+        update balance_details set balance = accbalance - payableamount where accno = iaccno;
+		RETURN 1;
+    end if;
+return 0;
+END
+
+DELIMITER $$
+CREATE DEFINER=`bankadmin`@`localhost` FUNCTION `passwordCheck`(iaccno int, ipassword varchar(30)) RETURNS int
+BEGIN
+	declare validpass varchar(30);
+    
+    select password into validpass from accounts where accno = iaccno;
+    
+    if validpass = ipassword then
+		return 1;
+	else
+		return 0;
+	end if;
+
+END$$
+DELIMITER ;

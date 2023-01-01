@@ -25,18 +25,16 @@ except:
 app = Flask('__name__')
 
 
-authtoken = 0
+
 
 @app.route("/")
 def login():
-    global authtoken
-    authtoken = 0
     return render_template('login.html', valid='')
 
 @app.route("/", methods = ['POST','GET'])
 def loginverify():
 
-    global authtoken
+
     if request.method == 'POST':
         accno = request.form["accno"]
         password = request.form["password"]
@@ -44,19 +42,20 @@ def loginverify():
             curr.execute('select passwordCheck(%s,%s)', [int(accno), password])
             validity = curr.fetchone()
             if validity[0] == 1:
-                authtoken = 1
+                return redirect('/' + str(accno))
+            else:
+                return render_template('login.html', valid = 'Please re-check the credentials')
         except :
-            return 'Invalid Input'
-
-    if authtoken == 0:
-        return render_template('login.html', valid = 'Please re-check the credentials')
-    else:
-        authtoken = 0
-        return redirect('/' + accno)
+            return render_template('login.html', valid = 'Invalid Input')
 
 
-@app.route('/<string:accno>')
+
+
+
+@app.route('/<int:accno>')
 def userdetails(accno):
+    curr.execute('select balance, min_balance from balance_details where accno = %s', [int(accno)])
+    bldetails = curr.fetchone()
     curr.execute('select * from transactions where sender_accno = %s', [int(accno)])
     transactions = curr.fetchall()
     curr.execute('select * from investments where accno = %s', [int(accno)])
@@ -65,14 +64,15 @@ def userdetails(accno):
     loans = curr.fetchall()
     curr.execute('select name from accounts where accno = %s', [int(accno)])
     name = curr.fetchone()
+    print(bldetails)
 
-    return render_template('userdetails.html', transactions=transactions, investments=investments, loans=loans,accno=accno, name = name[0])
+    return render_template('userdetails.html', bldetails = bldetails, transactions=transactions, investments=investments, loans=loans,accno=accno, name = name[0])
 
-@app.route('/<string:accno>transact')
+@app.route('/<int:accno>transact')
 def transactPage(accno):
     return render_template('transact.html', accno=accno)
 
-@app.route('/<string:accno>transact', methods=['POST'])
+@app.route('/<int:accno>transact', methods=['POST'])
 def transact(accno):
     if request.method == 'POST':
         raccno = request.form["raccno"]
@@ -82,13 +82,58 @@ def transact(accno):
         try:
             curr.execute('insert into transactions values(null,%s,%s,%s,%s,null)', [int(accno), int(raccno),int(amount),date])
             curr.execute('commit')
-        except:
-            print('Database insertion error')
+        except mysql.connector.Error as err:
+            print(err)
 
+        return redirect('/' + str(accno))
 
-    return redirect('/' + accno)
+@app.route('/<int:accno>openinvestment')
+def investmentpage(accno):
+    return render_template('investment.html', accno = accno, status = '')
 
+@app.route('/<int:accno>openinvestment', methods=['POST'])
+def investmentopen(accno):
+    if request.method == 'POST':
+        amount = request.form["amount"]
+        mdate = request.form["mdate"]
+        cdate = datetime.today().strftime('%Y-%m-%d')
+
+        try :
+            curr.execute('select openInvestment(%s,%s,%s,%s)', [accno,int(amount),mdate,cdate])
+            if curr.fetchone()[0] == 0:
+                print('You do not have sufficient funds to do so')
+                return render_template('investment.html', accno = accno, status = 'You do not have sufficient funds in your account to make the investment')
+            else:
+                curr.execute('commit')
+                return redirect('/' + str(accno))
+        except mysql.connector.Error as err:
+            print(err)
     
+    return 'hello'
+
+@app.route('/<int:accno>+<int:investmentid>investment', methods = ['POST'])
+def closeinvestment(accno, investmentid):
+    if request.method == 'POST':
+        curr.execute('delete from investments where investment_id = %s', [investmentid])
+        curr.execute('commit')
+        return redirect('/' + str(accno))
+
+@app.route('/<int:accno>+<int:loanid>loan', methods=['POST'])
+def repayLoan(accno, loanid):
+    if request.method == 'POST':
+        try:
+            curr.execute('select repayLoan(%s,%s)', [accno, loanid])
+            if curr.fetchone()[0] == 0:
+                print('You do not have sufficient funds to do so')
+            else:
+                curr.execute('commit')
+                return redirect('/' + str(accno))
+        except mysql.connector.Error as err:
+            print(err)
+
+    return 'hello'
+
+
 if __name__ == '__main__':
     app.run(debug=True)
     curr.close()

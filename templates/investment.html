@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investments</title>
+
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="hero">
+        <form action="/{{accno}}openinvestment" method="POST">
+            <p>Account Number : {{accno}}</p>
+            <input type='int' name = "amount" placeholder="Amount"/>
+            <input type='date' name = "mdate" placeholder="Maturity Date"/>  
+            <button type="submit">Open Investment</button>
+            <p>The interest rate is levied at an increment of 0.1% for each month upto a maximum of 7% and the invested amount is not compounded</p>
+            <p>{{status}}</p>
+        </form>
+    </div>
+</body>
+</html>

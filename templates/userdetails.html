@@ -6,23 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Banking</title>
 </head>
+
+<link rel="stylesheet" href="/static/styles.css">
+
 <style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: sans-serif;
-    }
 
     body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
+        min-height: 1000px;
     }
-
     .hero {
+        /* margin: 2000px; */
         width: 90vw;
+        /* height: 2000px; */
         display: flex;
         background-color: white;
         flex-direction: column;
@@ -46,7 +41,7 @@
     }
 
 
-    tr:hover {
+    tr:not(:first-child):hover {
         background-color: lightgrey;
     }
 
@@ -72,10 +67,17 @@
         justify-content: space-evenly;
     }
 
+    td > form > button {
+        background-color: rgb(255, 40, 40);
+    }
+
 </style>
+
 <body>
     <div class="hero">
         <h1>Hello There {{name}}!!</h1>
+        <p>Account Balance : {{bldetails[0]}}</p>
+        <p>Minimum Balance : {{bldetails[1]}}</p>
         <table id="transactions">
             <tr>
                 <td>Transaction ID</td>
@@ -105,7 +107,7 @@
                 <td>Maturity Date</td>
                 <td>Duration(days)</td>
                 <td>Maturity Amount</td>
-
+                <td></td>
             </tr>
             {% for data in investments %}
             <tr>
@@ -116,6 +118,11 @@
                 <td>{{data[5]}}</td>
                 <td>{{data[6]}}</td>
                 <td>{{data[7]}}</td>
+                <td>
+                    <form action="/{{accno}}+{{data[0]}}investment" method="POST">
+                        <button type="submit">CLOSE INVESTMENT</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </table>
@@ -129,6 +136,7 @@
                 <td>Procurement Date</td>
                 <td>Duration(in days)</td>
                 <td>Repayable Amount</td>
+                <td></td>
             </tr>
             
             {% for data in loans %}
@@ -140,24 +148,24 @@
                 <td>{{data[5]}}</td>
                 <td>{{data[6]}}</td>
                 <td>{{data[7]}}</td>
+                <td>
+                    <form action="/{{accno}}+{{data[0]}}loan" method="POST">
+                        <button type="submit">REPAY LOAN</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </table>
+
         <div id="buttons">
             <form action="/{{accno}}transact">
                 <button type="submit">New Transaction</button>
              </form>
-            <form action="/{{accno}}transact">
+            <form action="/{{accno}}openinvestment">
                 <button type="submit">New Investment</button>
              </form>
             <form action="/{{accno}}transact">
-                <button type="submit">Close Investment</button>
-             </form>
-            <form action="/{{accno}}transact">
                 <button type="submit">New Loan</button>
-             </form>
-            <form action="/{{accno}}transact">
-                <button type="submit">Repay Loan</button>
              </form>
         </div>
     </div>

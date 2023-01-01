@@ -6,83 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banking System</title>
 
-    <style>
+    <link rel="stylesheet" href="/static/styles.css">
 
+    <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             background-image: linear-gradient(to bottom, #ffa500, #d06b2d, #904032, #4a2125, #000000);
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-        }
-
-        #card {
-            height: 550px;
-            width: 350px;
-            background-color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            /* gap: 20px; */
-        }
-
-        form {
-            /* background-color: pink; */
-            width: 80%;
-            height: 45%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        form > input {
-            display: block;
-            height: 45px;
-            width: 100%;
-            margin:15px;
-            border: 2px solid grey;
-            border-radius: 5px;
-            text-align: left;
-            
-        }
-
-        button {
-            height: 40px;
-            width: 150px;
-            background-color: orange;
-            border: 1px solid green;
-            border-radius: 25px;
-            font-weight: bold;
-        }
-
-        form > p.verifyLogin {
-            color: red;
-            font-size: 15px;
-            font-weight: bold;
-            margin: 10px;
-        }
-
-        #card > p {
-            font-size: 25px;
-            font-weight: bold;
-            margin: 5px;
-        }
-
-        input {
-            padding: 10px;
-        }
-
-
-        
     </style>
 
 
@@ -92,8 +21,8 @@
         <img src="/static/security-svgrepo-com.svg" alt="" style="width: 50%; margin: 20px;">
         <p>Welcome Back</p>
         <form action="/" method = "POST">
-            <input type = "integer" name = "accno" placeholder="Account Number"/>
-            <input type = "text" name = "password" placeholder="Password"/>
+            <input type = "integer" name = "accno" placeholder="Account Number" required/>
+            <input type = "text" name = "password" placeholder="Password" required/>
             <button type="submit" class="btn btn-primary">LOGIN</button>
             <p class="verifyLogin">{{valid}}</p>
         </form>
