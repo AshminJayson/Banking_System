@@ -12,7 +12,7 @@
 <style>
 
     body {
-        min-height: 1000px;
+        min-height: 1600px;
     }
     
     .hero {
@@ -33,7 +33,7 @@
     table {
         border: 2px solid black;
         border-radius: 5px;
-        margin: 10px;
+        margin: 30px;
     }
 
 
@@ -76,12 +76,56 @@
 
 <body>
     <div class="hero">
-        <h1>Hello There {{name}}!!</h1>
-        <p>Account Balance : {{bldetails[0]}}</p>
-        <p>Minimum Balance : {{bldetails[1]}}</p>
+        <h1>ADMIN PORTAL</h1>
+        <h2>Account Details</h2>
+        <table id="accounts">
+            <tr>
+                <td>Account No</td>
+                <td>Name</td>
+                <td>IFSC Code</td>
+                <td>Branch</td>
+                <td>Phone Number</td>
+                <td>Account Type</td>
+            </tr>
+            {% for data in accounts %}
+            <tr>
+                <td>{{data[0]}}</td>
+                <td>{{data[1]}}</td>
+                <td>{{data[2]}}</td>
+                <td>{{data[3]}}</td>
+                <td>{{data[4]}}</td>
+                <td>{{data[5]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <h2>Balance Details</h2>
+        <table id="Balance Details">
+            <tr>
+                <td>Account No</td>
+                <td>Current Balance</td>
+                <td>Minimum Balance</td>
+                <td></td>
+            </tr>
+            {% for data in balances %}
+            <tr>
+                <td>{{data[0]}}</td>
+                <td>{{data[1]}}</td>
+                <td>{{data[2]}}</td>
+                <td>
+                    <form action="/adminlogin/{{data[0]}}+balanceupdate" method="POST">
+                        <input type="integer" name="amount" placeholder="Credit Amount" style="width: 150px; height: 10px;" required/>
+                        <button type="submit">Credit Amount</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Transaction Details</h2>
         <table id="transactions">
             <tr>
                 <td>Transaction ID</td>
+                <td>Sender AccNo</td>
                 <td>Recipient AccNo</td>
                 <td>Amount</td>
                 <td>Date of Transaction</td>
@@ -90,6 +134,7 @@
             {% for data in transactions %}
             <tr>
                 <td>{{data[0]}}</td>
+                <td>{{data[1]}}</td>
                 <td>{{data[2]}}</td>
                 <td>{{data[3]}}</td>
                 <td>{{data[4]}}</td>
@@ -98,10 +143,11 @@
             {% endfor %}
         </table>
         
-        
+        <h2>Investment Details</h2>
         <table id="investments">
             <tr>
                 <td>Investment ID</td>
+                <td>Investor AccNo</td>
                 <td>Amount Invested</td>
                 <td>Interest Rate</td>
                 <td>Investment Date</td>
@@ -113,24 +159,22 @@
             {% for data in investments %}
             <tr>
                 <td>{{data[0]}}</td>
+                <td>{{data[1]}}</td>
                 <td>{{data[2]}}</td>
                 <td>{{data[3]}}</td>
                 <td>{{data[4]}}</td>
                 <td>{{data[5]}}</td>
                 <td>{{data[6]}}</td>
                 <td>{{data[7]}}</td>
-                <td>
-                    <form action="/{{accno}}+{{data[0]}}investment" method="POST">
-                        <button type="submit">CLOSE INVESTMENT</button>
-                    </form>
-                </td>
             </tr>
             {% endfor %}
         </table>
         
+        <h2>Loan Details</h2>
         <table id="loans">
             <tr>
                 <td>Loan ID</td>
+                <td>Loan Bearer AccNo</td>
                 <td>Amount</td>
                 <td>Interest Rate</td>
                 <td>Repayment Date</td>
@@ -144,6 +188,7 @@
             {% for data in loans %}
             <tr>
                 <td>{{data[0]}}</td>
+                <td>{{data[1]}}</td>
                 <td>{{data[2]}}</td>
                 <td>{{data[3]}}</td>
                 <td>{{data[4]}}</td>
@@ -151,28 +196,16 @@
                 <td>{{data[6]}}</td>
                 <td>{{data[7]}}</td>
                 <td>{{data[8]}}</td>
-                {% if data[8] == 'Sanctioned' %}
+                {% if data[8] != 'Sanctioned' %}
                 <td>
-                    <form action="/{{accno}}+{{data[0]}}loan" method="POST">
-                        <button type="submit">REPAY LOAN</button>
+                    <form action="/adminlogin/{{data[1]}}+{{data[0]}}+{{data[2]}}sanctionloan" method="POST">
+                        <button type="submit">SANCTION LOAN</button>
                     </form>
                 </td>
                 {% endif %}
             </tr>
             {% endfor %}
         </table>
-
-        <div id="buttons">
-            <form action="/{{accno}}transact">
-                <button type="submit">New Transaction</button>
-             </form>
-            <form action="/{{accno}}openinvestment">
-                <button type="submit">New Investment</button>
-             </form>
-            <form action="/{{accno}}loan">
-                <button type="submit">New Loan</button>
-             </form>
-        </div>
     </div>
     
 </body>

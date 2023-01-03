@@ -2,7 +2,7 @@ CREATE DATABASE `bankingsystem` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!800
 
 
 CREATE TABLE `accounts` (
-  `accno` int NOT NULL,
+  `accno` int NOT NULL AUTO_INCREMENT,
   `name` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `ifsc_code` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `branch` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
@@ -11,6 +11,7 @@ CREATE TABLE `accounts` (
   `password` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   PRIMARY KEY (`accno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+SELECT * FROM bankingsystem.accounts;
 
 CREATE TABLE `investments` (
   `investment_id` int NOT NULL AUTO_INCREMENT,
@@ -39,14 +40,16 @@ CREATE TABLE `loans` (
   `accno` int NOT NULL,
   `amount` int NOT NULL,
   `interest_rate` float DEFAULT NULL,
-  `repayment_deadline` date NOT NULL,
   `procurement_date` date NOT NULL,
+  `repayment_deadline` date NOT NULL,
   `duration` int DEFAULT NULL,
   `repayable_amount` int DEFAULT NULL,
+  `status` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`loan_id`),
   KEY `Loans_Accounts_idx` (`accno`),
   CONSTRAINT `Loans_Accounts` FOREIGN KEY (`accno`) REFERENCES `accounts` (`accno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 CREATE TABLE `transactions` (
   `transaction_id` int NOT NULL AUTO_INCREMENT,
@@ -142,13 +145,14 @@ CREATE DEFINER=`bankadmin`@`localhost` TRIGGER `loans_BEFORE_INSERT` BEFORE INSE
 		set period = period - 1;
         set interesttemp = interesttemp + 0.15;
 	end while;
-
-      if interesttemp > 25 then
-		    set interesttemp = 25;
-	    end if;
+    
+    if interesttemp > 25 then
+		set interesttemp = 25;
+	end if;
     
     set new.interest_rate = interesttemp;
-	set new.repayable_amount = ((interesttemp * new.amount * pyears) / 100) + new.amount;
+	  set new.repayable_amount = ((interesttemp * new.amount * pyears) / 100) + new.amount;
+    set new.status = 'Pending Sanction';
 END
 
 CREATE DEFINER=`bankadmin`@`localhost` TRIGGER `transactions_BEFORE_INSERT` BEFORE INSERT ON `transactions` FOR EACH ROW BEGIN
@@ -226,5 +230,15 @@ BEGIN
 		return 0;
 	end if;
 
+END$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE DEFINER=`bankadmin`@`localhost` FUNCTION `sanctionLoan`(iaccno int, iloan_id int, iamount int) RETURNS int
+BEGIN
+	update loans set status = 'Sanctioned' where loan_id = iloan_id;
+  update balance_details set balance = balance + iamount where accno = iaccno;
+RETURN 1;
 END$$
 DELIMITER ;

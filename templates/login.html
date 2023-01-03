@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banking System</title>
 
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="static/styles.css">
 
     <style>
         body {
@@ -25,6 +25,9 @@
             <input type = "text" name = "password" placeholder="Password" required/>
             <button type="submit" class="btn btn-primary">LOGIN</button>
             <p class="verifyLogin">{{valid}}</p>
+        </form>
+        <form action="/adminlogin">
+            <button type="submit" style="background-color: red;">ADMIN LOGIN</button>
         </form>
     </div>
 </body>
