@@ -3,10 +3,6 @@ from flask import Flask, request, render_template, redirect, session
 import time
 from datetime import datetime
 
-datetime.today().strftime('%Y-%m-%d')
-
-
-
 
 try :
     conn = mysql.connector.connect(
